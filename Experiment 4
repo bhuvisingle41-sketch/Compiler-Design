@@ -1,0 +1,69 @@
+#include <stdio.h>
+
+int main() {
+    int n, m;
+    int nfa[10][10];
+    int dfa[10][10];
+    int dfa_states[10][10];
+    int visited[10] = {0};
+    int count = 0;
+
+    scanf("%d", &n);   // number of states
+    scanf("%d", &m);   // number of symbols
+
+    // input NFA transitions (only single symbol for simplicity)
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<n;j++) {
+            scanf("%d", &nfa[i][j]);
+        }
+    }
+
+    // first DFA state = {0}
+    for(int i=0;i<n;i++)
+        dfa_states[0][i] = 0;
+
+    dfa_states[0][0] = 1;
+    count = 1;
+
+    for(int i=0;i<count;i++) {
+        int new_state[10] = {0};
+
+        for(int j=0;j<n;j++) {
+            if(dfa_states[i][j] == 1) {
+                for(int k=0;k<n;k++) {
+                    if(nfa[j][k] == 1)
+                        new_state[k] = 1;
+                }
+            }
+        }
+
+        int exists = 0;
+        for(int x=0;x<count;x++) {
+            int same = 1;
+            for(int y=0;y<n;y++) {
+                if(dfa_states[x][y] != new_state[y]) {
+                    same = 0;
+                    break;
+                }
+            }
+            if(same) exists = 1;
+        }
+
+        if(!exists) {
+            for(int y=0;y<n;y++)
+                dfa_states[count][y] = new_state[y];
+            count++;
+        }
+    }
+
+    printf("\nDFA States:\n");
+    for(int i=0;i<count;i++) {
+        printf("{ ");
+        for(int j=0;j<n;j++)
+            if(dfa_states[i][j])
+                printf("%d ", j);
+        printf("}\n");
+    }
+
+    return 0;
+}
